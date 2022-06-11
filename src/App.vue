@@ -1,15 +1,26 @@
 <template>
   <div class="container">
     <global-header :user="currentUser"></global-header>
+    <form action="">
+      <div class="mb-3">
+        <label class="form-label">邮箱地址</label>
+        <validate-input :rules="emailRules" v-model="emailVal" placeholder="请输入邮箱地址" type="text"></validate-input>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">密码</label>
+        <validate-input :rules="passwordRules" v-model="passwordVal" placeholder="请输入密码" type="text"></validate-input>
+      </div>
+    </form>
     <column-list :list="list"></column-list>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
+import ValidateInput, { RuleProps } from './components/ValidateInput.vue'
 const currentUser: UserProps = {
   isLogin: true,
   name: 'vikng'
@@ -44,17 +55,30 @@ export default defineComponent({
   name: 'App',
   components: {
     ColumnList,
-    GlobalHeader
+    GlobalHeader,
+    ValidateInput
   },
   setup () {
+    // email
+    const emailVal = ref('')
+    const emailRules: RuleProps = [
+      { type: 'required', message: '电子邮箱地址不能为空' },
+      { type: 'email', message: '请输入正确的电子邮箱格式' }
+    ]
+    // password
+    const passwordVal = ref('')
+    const passwordRules: RuleProps = [
+      { type: 'required', message: '密码不能为空' },
+      { type: 'password', message: '请输入数字和字母组合的8-16位密码' }
+    ]
     return {
       list: testData,
-      currentUser
+      currentUser,
+      emailRules,
+      emailVal,
+      passwordVal,
+      passwordRules
     }
   }
 })
 </script>
-
-<style>
-
-</style>
