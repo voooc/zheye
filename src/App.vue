@@ -1,16 +1,19 @@
 <template>
   <div class="container">
     <global-header :user="currentUser"></global-header>
-    <form action="">
+    <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">邮箱地址</label>
         <validate-input :rules="emailRules" v-model="emailVal" placeholder="请输入邮箱地址" type="text"></validate-input>
       </div>
       <div class="mb-3">
         <label class="form-label">密码</label>
-        <validate-input :rules="passwordRules" v-model="passwordVal" placeholder="请输入密码" type="text"></validate-input>
+        <validate-input :rules="passwordRules" v-model="passwordVal" placeholder="请输入密码" type="password"></validate-input>
       </div>
-    </form>
+      <template v-slot:submit>
+        <span class="btn btn-danger">Submit</span>
+      </template>
+    </validate-form>
     <column-list :list="list"></column-list>
   </div>
 </template>
@@ -21,6 +24,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
 import ValidateInput, { RuleProps } from './components/ValidateInput.vue'
+import ValidateForm from './components/ValidateForm.vue'
 const currentUser: UserProps = {
   isLogin: true,
   name: 'vikng'
@@ -56,7 +60,8 @@ export default defineComponent({
   components: {
     ColumnList,
     GlobalHeader,
-    ValidateInput
+    ValidateInput,
+    ValidateForm
   },
   setup () {
     // email
@@ -71,13 +76,18 @@ export default defineComponent({
       { type: 'required', message: '密码不能为空' },
       { type: 'password', message: '请输入数字和字母组合的8-16位密码' }
     ]
+    // 输出表单处理结果
+    const onFormSubmit = (result: boolean) => {
+      console.log(result)
+    }
     return {
       list: testData,
       currentUser,
       emailRules,
       emailVal,
       passwordVal,
-      passwordRules
+      passwordRules,
+      onFormSubmit
     }
   }
 })

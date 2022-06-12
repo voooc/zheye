@@ -3,7 +3,7 @@
     <input
       class="form-control"
       :class="{'is-invalid': inputRef.error}"
-      :value="inputRef.val"
+      :value="modelValue"
       @blur="validateInput"
       @input="updateValue"
       v-bind="$attrs"
@@ -12,7 +12,8 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, reactive } from 'vue'
+import { defineComponent, PropType, reactive, onMounted } from 'vue'
+import { emitter } from './ValidateForm.vue'
 const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 const passwordReg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/
 interface RuleProp {
@@ -25,6 +26,8 @@ export default defineComponent({
     rules: Array as PropType<RuleProps>,
     modelValue: String
   },
+  // 非prop的attribute件：组件可以接受任意的attribute，而这些attribute会被添加到这个组件的根元素上。
+  // 如果不希望组件的根元素继承attribute，设置inheritAttrs：false，以及$attrs
   inheritAttrs: false,
   setup (props, context) {
     const inputRef = reactive({
@@ -32,7 +35,8 @@ export default defineComponent({
       error: false,
       message: ''
     })
-    const updateValue = (e: KeyboardEvent) => {
+    // 完成数据的双向绑定
+    const updateValue = (e: Event) => {
       const targetValue = (e.target as HTMLInputElement).value
       inputRef.val = targetValue
       context.emit('update:modelValue', targetValue)
@@ -62,8 +66,21 @@ export default defineComponent({
           return passed
         })
         inputRef.error = !allPassed
+        return allPassed
       }
+      return true
     }
+    const clearInputs = () => {
+      inputRef.val = ''
+      inputRef.error = false
+      inputRef.message = ''
+      context.emit('update:modelValue', inputRef.val)
+    }
+    // 触发事件
+    onMounted(() => {
+      emitter.emit('form-item-created', validateInput)
+      emitter.emit('form-item-clear', clearInputs)
+    })
     return {
       inputRef,
       validateInput,
