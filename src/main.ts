@@ -1,24 +1,9 @@
 import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
 import App from './App.vue'
-import Home from './views/Home.vue'
-import Login from './views/Login.vue'
-const routerHistory = createWebHistory()
-const router = createRouter({
-  history: routerHistory,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
-    }
-  ]
-})
+import store from './store'
+import router from './router'
+
 const app = createApp(App)
 app.use(router)
+app.use(store)
 app.mount('#app')
