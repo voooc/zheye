@@ -31,9 +31,9 @@ export default defineComponent({
       // 循环执行数组，得到最后的结果
       const result = funcArr.map(func => func()).every(result => result)
       // 结果正确，清空
-      if (result) {
-        clearArr.map(func => func())
-      }
+      // if (result) {
+      //   clearArr.map(func => func())
+      // }
       // 子组件通过自定义事件给父组件传递数据
       context.emit('form-submit', result)
     }
